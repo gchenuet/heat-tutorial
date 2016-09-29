@@ -23,12 +23,18 @@ parameters:
     label: Public network name or ID
     description: Public network to attach server to.
     default: public
+  dns:
+    type: comma_delimited_list
+    label: DNS nameservers
+    description: Comma separated list of DNS nameservers for the private network.
+    default: '8.8.8.8'
  
 resources:
   network:
     type: Lib::MSG::PrivateNetwork
     properties:
       public_network: { get_param: public_network }
+      dns: { get_param: dns }
 
   mysql:
     type: Lib::MSG::MySQL

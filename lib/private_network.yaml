@@ -7,7 +7,7 @@ parameters:
     type: string
     label: Public network name or ID
     description: Public network with floating IP addresses.
-    default: public
+    default: 'public'
   cidr:
     type: string
     label: CIDR
@@ -26,8 +26,8 @@ resources:
   private_subnet:
     type: OS::Neutron::Subnet
     properties:
-      network_id: { get_resource: private_network }
-      cidr: 10.10.10.0/24
+      network: { get_resource: private_network }
+      cidr: { get_param: cidr }
       dns_nameservers: { get_param: dns }
 
   router:
@@ -39,7 +39,7 @@ resources:
   router-interface:
     type: OS::Neutron::RouterInterface
     properties:
-      router_id: { get_resource: router }
+      router: { get_resource: router }
       subnet: { get_resource: private_subnet }
 
 outputs:
