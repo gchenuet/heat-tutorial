@@ -18,7 +18,7 @@ parameters:
     label: Key name
     description: Name of key-pair to be installed on the compute instance.
     default: my_key
-  public_network:
+  public_net:
     type: string
     label: Public network name or ID
     description: Public network to attach server to.
@@ -31,13 +31,13 @@ parameters:
  
 resources:
   network:
-    type: Lib::MSG::PrivateNetwork
+    type: Lib::RH::PrivateNetwork
     properties:
-      public_network: { get_param: public_network }
+      public_network: { get_param: public_net }
       dns: { get_param: dns }
 
   mysql:
-    type: Lib::MSG::MySQL
+    type: Lib::RH::MySQL
     properties:
       image: { get_param: image }
       flavor: { get_param: flavor }
@@ -47,7 +47,7 @@ resources:
       database_user: wordpress_user
  
   wordpress:
-    type: Lib::MSG::Wordpress
+    type: Lib::RH::Wordpress
     properties:
       image: { get_param: image }
       flavor: { get_param: flavor }
@@ -59,10 +59,10 @@ resources:
       database_password: { get_attr: [mysql, database_password] }
 
   floating_ip:
-    type: Lib::MSG::FloatingIP
+    type: Lib::RH::FloatingIP
     properties:
       port: { get_attr: [wordpress, port] }
-      public_network: { get_param: public_network }
+      public_network: { get_param: public_net }
 
 outputs:
   ip:

@@ -28,19 +28,25 @@ parameters:
     label: Cluster size
     description: Number of instances in cluster.
     default: 2
+  dns:
+    type: comma_delimited_list
+    label: DNS nameservers
+    description: Comma separated list of DNS nameservers for the private network.
+    default: '8.8.8.8'
 
 resources:
   network:
-    type: Lib::MSG::PrivateNetwork
+    type: Lib::RH::PrivateNetwork
     properties:
       public_network: { get_param: public_network }
+      dns: { get_param: dns }
 
   tiny_cluster:
     type: OS::Heat::ResourceGroup
     properties:
       count: { get_param: cluster_size }
       resource_def:
-        type: Lib::MSG::Tiny
+        type: Lib::RH::Tiny
         properties:
           image: { get_param: image }
           flavor: { get_param: flavor }
@@ -48,7 +54,7 @@ resources:
           private_network: { get_attr: [network, name] }
 
   load_balancer:
-    type: Lib::MSG::HAProxy
+    type: Lib::RH::HAProxy
     properties:
       image: { get_param: image }
       flavor: { get_param: flavor }
@@ -57,7 +63,7 @@ resources:
       servers: { get_attr: [tiny_cluster, ip] }
 
   floating_ip:
-    type: Lib::MSG::FloatingIP
+    type: Lib::RH::FloatingIP
     properties:
       port: { get_attr: [load_balancer, port] }
       public_network: { get_param: public_network }

@@ -23,15 +23,21 @@ parameters:
     label: Public network name or ID
     description: Public network to attach server to.
     default: public
+  dns:
+    type: comma_delimited_list
+    label: DNS nameservers
+    description: Comma separated list of DNS nameservers for the private network.
+    default: '8.8.8.8'
 
 resources:
   network:
-    type: Lib::MSG::PrivateNetwork
+    type: Lib::RH::PrivateNetwork
     properties:
       public_network: { get_param: public_network }
+      dns: { get_param: dns }
 
   tiny_instance:
-    type: Lib::MSG::Tiny
+    type: Lib::RH::Tiny
     properties:
       image: { get_param: image }
       flavor: { get_param: flavor }
@@ -39,7 +45,7 @@ resources:
       private_network: { get_attr: [network, name] }
 
   floating_ip:
-    type: Lib::MSG::FloatingIP
+    type: Lib::RH::FloatingIP
     properties:
       port: { get_attr: [tiny_instance, port] }
       public_network: { get_param: public_network }
